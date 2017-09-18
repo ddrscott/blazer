@@ -61,14 +61,10 @@ function runQueryHelper(query) {
 }
 
 function queryComplete(query, status) {
-  if (ga) {
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'Run Query',
-      eventLabel: query.data,
-      eventAction: status
-    });
-  }
+  gtag && gtag('event', status, {
+    'event_category': 'Run Query',
+    'event_label': query.data
+  });
 
   var index = runningQueries.indexOf(query)
   runningQueries.splice(index, 1)
