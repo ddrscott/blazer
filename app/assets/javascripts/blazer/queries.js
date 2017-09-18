@@ -47,20 +47,29 @@ function runQueryHelper(query) {
       if (!query.canceled) {
         query.success(d)
       }
-      queryComplete(query)
+      queryComplete(query, 'complete')
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
     if (!query.canceled) {
       var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
       query.error(message)
     }
-    queryComplete(query)
+    queryComplete(query, 'fail')
   })
   query.xhr = xhr
   return xhr
 }
 
-function queryComplete(query) {
+function queryComplete(query, status) {
+  if (ga) {
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'Run Query',
+      eventLabel: query.data,
+      eventAction: status
+    });
+  }
+
   var index = runningQueries.indexOf(query)
   runningQueries.splice(index, 1)
   runNext()
